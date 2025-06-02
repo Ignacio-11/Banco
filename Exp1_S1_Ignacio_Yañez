@@ -1,0 +1,170 @@
+import java.util.Scanner;
+
+class CuentaBancaria {
+    private String nombre;
+    private String apellidoPaterno;
+    private String apellidoMaterno;
+    private String domicilio;
+    private String comuna;
+    private String telefono;
+    private String rut;
+    private String numeroCuenta;
+    private double saldo;
+
+    public CuentaBancaria(String nombre, String apellidoPaterno, String apellidoMaterno,
+                          String domicilio, String comuna, String telefono, String rut, String numeroCuenta) {
+        this.nombre = nombre;
+        this.apellidoPaterno = apellidoPaterno;
+        this.apellidoMaterno = apellidoMaterno;
+        this.domicilio = domicilio;
+        this.comuna = comuna;
+        this.telefono = telefono;
+        this.rut = rut;
+        this.numeroCuenta = numeroCuenta;
+        this.saldo = 0.0;
+    }
+
+    public void depositar(double monto) {
+        if (monto > 0) {
+            saldo += monto;
+            System.out.println("Deposito exitoso. Saldo actual: $" + saldo);
+        } else {
+            System.out.println("El monto debe ser positivo.");
+        }
+    }
+
+    public void retirar(double monto) {
+        if (monto > 0 && monto <= saldo) {
+            saldo -= monto;
+            System.out.println("Retiro con exito. Saldo actual: $" + saldo);
+        } else {
+            System.out.println("Fondos insuficientes o monto invalido.");
+        }
+    }
+
+    public void mostrarSaldo() {
+        System.out.println("Saldo actual: $" + saldo);
+    }
+
+    public void mostrarDetalles() {
+        System.out.println("\n===DETALLES DE LA CUENTA===");
+        System.out.println("Nombre completo: " + nombre + " " + apellidoPaterno + " " + apellidoMaterno);
+        System.out.println("RUT: " + rut);
+        System.out.println("Domicilio: " + domicilio);
+        System.out.println("Comuna: " + comuna);
+        System.out.println("Telefono: " + telefono);
+        System.out.println("Numero de cuenta corriente: " + numeroCuenta);
+        System.out.println("Saldo: $" + saldo);
+    }
+}
+
+public class SistemaBanco {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        CuentaBancaria cuenta = null;
+        int opcion;
+
+        do {
+            System.out.println("\n===MENU BANCO===");
+            System.out.println("1. Crear cuenta");
+            System.out.println("2. Consultar saldo");
+            System.out.println("3. Depositar dinero");
+            System.out.println("4. Retirar dinero");
+            System.out.println("5. Ver detalles de la cuenta");
+            System.out.println("6. Salir");
+            System.out.print("Selecciona una opcion: ");
+            opcion = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (opcion) {
+                case 1:
+                    if (cuenta == null) {
+                        String nombre, apellidoPaterno, apellidoMaterno, domicilio, comuna, telefono, rut, numeroCuenta;
+
+                        do {
+                            System.out.print("Ingrese su nombre: ");
+                            nombre = scanner.nextLine();
+                        } while (!nombre.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+"));
+
+                        do {
+                            System.out.print("Ingrese su apellido paterno: ");
+                            apellidoPaterno = scanner.nextLine();
+                        } while (!apellidoPaterno.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+"));
+
+                        do {
+                            System.out.print("Ingrese su apellido materno: ");
+                            apellidoMaterno = scanner.nextLine();
+                        } while (!apellidoMaterno.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+"));
+
+                        do {
+                            System.out.print("Ingrese su domicilio: ");
+                            domicilio = scanner.nextLine();
+                        } while (!domicilio.matches("[a-zA-Z0-9\\sáéíóúÁÉÍÓÚñÑ#\\-]+"));
+
+                        do {
+                            System.out.print("Ingrese su comuna: ");
+                            comuna = scanner.nextLine();
+                        } while (!comuna.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+"));
+
+                        System.out.print("Ingresa tu numero de telefono: ");
+                        telefono = scanner.nextLine();
+
+                        do {
+                            System.out.print("Ingresa tu RUT (minimo 11, maximo 12 caracteres): ");
+                            rut = scanner.nextLine();
+                        } while (rut.length() < 11 || rut.length() > 12);
+
+                        System.out.print("Ingrese su numero de cuenta corriente: ");
+                        numeroCuenta = scanner.nextLine();
+
+                        cuenta = new CuentaBancaria(nombre, apellidoPaterno, apellidoMaterno,
+                                domicilio, comuna, telefono, rut, numeroCuenta);
+
+                        System.out.println("Cuenta creada con exito.");
+                    } else {
+                        System.out.println("Ya existe una cuenta creada.");
+                    }
+                    break;
+
+                case 2:
+                    if (cuenta != null) cuenta.mostrarSaldo();
+                    else System.out.println("Primero debe crear una cuenta.");
+                    break;
+
+                case 3:
+                    if (cuenta != null) {
+                        System.out.print("Ingrese el monto a depositar: ");
+                        double monto = scanner.nextDouble();
+                        cuenta.depositar(monto);
+                    } else {
+                        System.out.println("Primero debe crear una cuenta.");
+                    }
+                    break;
+
+                case 4:
+                    if (cuenta != null) {
+                        System.out.print("Ingrese el monto a retirar: ");
+                        double monto = scanner.nextDouble();
+                        cuenta.retirar(monto);
+                    } else {
+                        System.out.println("Primero debe crear una cuenta.");
+                    }
+                    break;
+
+                case 5:
+                    if (cuenta != null) cuenta.mostrarDetalles();
+                    else System.out.println("Primero debe crear una cuenta.");
+                    break;
+
+                case 6:
+                    System.out.println("Gracias por usar el sistema bancario.");
+                    break;
+
+                default:
+                    System.out.println("Opcion invalida. Intenta nuevamente.");
+            }
+        } while (opcion != 6);
+
+        scanner.close();
+    }
+}
