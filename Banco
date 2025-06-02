@@ -1,0 +1,297 @@
+import java.util.Scanner;
+
+abstract class Cuenta {
+    protected String rut;
+    protected String numeroCuenta;
+
+    public Cuenta(String rut, String numeroCuenta) {
+        this.rut = rut;
+        this.numeroCuenta = numeroCuenta;
+    }
+
+    public abstract void mostrarTipoCuenta();
+}
+
+class CuentaBancaria extends Cuenta {
+    private String nombre;
+    private String apellidoPaterno;
+    private String apellidoMaterno;
+    private String domicilio;
+    private String comuna;
+    private String telefono;
+    private double saldo;
+
+    public CuentaBancaria(String nombre, String apellidoPaterno, String apellidoMaterno,
+                          String domicilio, String comuna, String telefono,
+                          String rut, String numeroCuenta) {
+        super(rut, numeroCuenta);
+        this.nombre = nombre;
+        this.apellidoPaterno = apellidoPaterno;
+        this.apellidoMaterno = apellidoMaterno;
+        this.domicilio = domicilio;
+        this.comuna = comuna;
+        this.telefono = telefono;
+        this.saldo = 0.0;
+    }
+
+    public void depositar(double monto) {
+        if (monto > 0) {
+            saldo += monto;
+            System.out.println("Deposito con exito. Saldo actual: $" + saldo);
+        } else {
+            System.out.println("El monto debe ser positivo.");
+        }
+    }
+
+    public void retirar(double monto) {
+        if (monto > 0 && monto <= saldo) {
+            saldo -= monto;
+            System.out.println("Retiro con exito. Saldo actual: $" + saldo);
+        } else {
+            System.out.println("Dinero insuficiente o monto invalido.");
+        }
+    }
+
+    public void mostrarSaldo() {
+        System.out.println("Saldo actual: $" + saldo);
+    }
+
+    public void mostrarDetalles() {
+        System.out.println("\n===DETALLES DE LA CUENTA===");
+        System.out.println("Tipo de cuenta: Cuenta Corriente");
+        System.out.println("Nombre completo: " + nombre + " " + apellidoPaterno + " " + apellidoMaterno);
+        System.out.println("RUT: " + rut);
+        System.out.println("Domicilio: " + domicilio);
+        System.out.println("Comuna: " + comuna);
+        System.out.println("Telefono: " + telefono);
+        System.out.println("Numero de cuenta: " + numeroCuenta);
+        System.out.println("Saldo: $" + saldo);
+    }
+
+    @Override
+    public void mostrarTipoCuenta() {
+        System.out.println("Cuenta corriente.");
+    }
+}
+
+class CuentaAhorro extends Cuenta {
+    private double saldo;
+
+    public CuentaAhorro(String rut, String numeroCuenta) {
+        super(rut, numeroCuenta);
+        this.saldo = 0.0;
+    }
+
+    public void depositar(double monto) {
+        saldo += monto;
+        System.out.println("Deposito en cuenta de ahorro con exito. Saldo: $" + saldo);
+    }
+
+    public void retirar(double monto) {
+        if (monto > 0 && monto <= saldo) {
+            saldo -= monto;
+            System.out.println("Retiro con exito. Saldo: $" + saldo);
+        } else {
+            System.out.println("Dinero insuficiente o monto invalido.");
+        }
+    }
+
+    public void mostrarSaldo() {
+        System.out.println("Saldo en la cuenta de ahorro: $" + saldo);
+    }
+
+    public void mostrarDetalles() {
+        System.out.println("Cuenta de Ahorro - RUT: " + rut + ", Numero de cuenta: " + numeroCuenta + ", Saldo: $" + saldo);
+    }
+
+    @Override
+    public void mostrarTipoCuenta() {
+        System.out.println("Cuenta de ahorro.");
+    }
+}
+
+class CuentaCredito extends Cuenta {
+    private double lineaCredito = 2000000;
+    private double deuda = 0;
+
+    public CuentaCredito(String rut, String numeroCuenta) {
+        super(rut, numeroCuenta);
+    }
+
+    public void usarCredito(double monto) {
+        if (monto > 0 && (deuda + monto) <= lineaCredito) {
+            deuda += monto;
+            System.out.println("Credito utilizado con exito. Deuda actual: $" + deuda);
+        } else {
+            System.out.println("Limite de credito excedido o monto invalido.");
+        }
+    }
+
+    public void pagarCredito(double monto) {
+        if (monto > 0 && monto <= deuda) {
+            deuda -= monto;
+            System.out.println("Pago con exito. Deuda restante: $" + deuda);
+        } else {
+            System.out.println("Monto invalido.");
+        }
+    }
+
+    public void mostrarDetalles() {
+        System.out.println("Cuenta de Credito - RUT: " + rut + ", Numero de cuenta: " + numeroCuenta + ", Deuda actual: $" + deuda);
+    }
+
+    @Override
+    public void mostrarTipoCuenta() {
+        System.out.println("Cuenta de credito.");
+    }
+}
+
+public class SistemaBanco {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Cuenta cuenta = null;
+        int opcion;
+
+        do {
+            System.out.println("\n===MENU BANCO===");
+            System.out.println("1. Crear cuenta");
+            System.out.println("2. Consultar saldo/detalles");
+            System.out.println("3. Depositar dinero");
+            System.out.println("4. Retirar o pagar credito");
+            System.out.println("5. Ver tipo de cuenta");
+            System.out.println("6. Salir");
+            System.out.print("Selecciona una opcion: ");
+            opcion = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (opcion) {
+                case 1:
+                    if (cuenta == null) {
+                        System.out.println("Seleccione el tipo de cuenta:");
+                        System.out.println("1. Cuenta Corriente");
+                        System.out.println("2. Cuenta de Ahorro");
+                        System.out.println("3. Cuenta de Credito");
+                        System.out.print("Opcion: ");
+                        int tipo = scanner.nextInt();
+                        scanner.nextLine();
+
+                        System.out.print("Ingrese su RUT: ");
+                        String rut = scanner.nextLine();
+                        System.out.print("Ingrese su numero de cuenta: ");
+                        String numero = scanner.nextLine();
+
+                        switch (tipo) {
+                            case 1:
+                                System.out.print("Nombre: ");
+                                String nombre = scanner.nextLine();
+                                System.out.print("Apellido paterno: ");
+                                String apPat = scanner.nextLine();
+                                System.out.print("Apellido materno: ");
+                                String apMat = scanner.nextLine();
+                                System.out.print("Domicilio: ");
+                                String domicilio = scanner.nextLine();
+                                System.out.print("Comuna: ");
+                                String comuna = scanner.nextLine();
+                                System.out.print("Telefono: ");
+                                String telefono = scanner.nextLine();
+                                cuenta = new CuentaBancaria(nombre, apPat, apMat, domicilio, comuna, telefono, rut, numero);
+                                break;
+
+                            case 2:
+                                cuenta = new CuentaAhorro(rut, numero);
+                                break;
+
+                            case 3:
+                                cuenta = new CuentaCredito(rut, numero);
+                                break;
+
+                            default:
+                                System.out.println("Opcion incorrecta.");
+                        }
+
+                        if (cuenta != null) {
+                            System.out.println("Cuenta creada con exito.");
+                        }
+                    } else {
+                        System.out.println("Ya hay una cuenta creada.");
+                    }
+                    break;
+
+                case 2:
+                    if (cuenta != null) {
+                        if (cuenta instanceof CuentaBancaria) {
+                            ((CuentaBancaria) cuenta).mostrarDetalles();
+                        } else if (cuenta instanceof CuentaAhorro) {
+                            ((CuentaAhorro) cuenta).mostrarDetalles();
+                        } else if (cuenta instanceof CuentaCredito) {
+                            ((CuentaCredito) cuenta).mostrarDetalles();
+                        }
+                    } else {
+                        System.out.println("Primero debes crear una cuenta.");
+                    }
+                    break;
+
+                case 3:
+                    if (cuenta != null) {
+                        System.out.print("Monto a depositar: ");
+                        double monto = scanner.nextDouble();
+                        if (cuenta instanceof CuentaBancaria) {
+                            ((CuentaBancaria) cuenta).depositar(monto);
+                        } else if (cuenta instanceof CuentaAhorro) {
+                            ((CuentaAhorro) cuenta).depositar(monto);
+                        } else {
+                            System.out.println("No se puede depositar en cuenta de credito.");
+                        }
+                    } else {
+                        System.out.println("Primero debes crear una cuenta.");
+                    }
+                    break;
+
+                case 4:
+                    if (cuenta != null) {
+                        if (cuenta instanceof CuentaBancaria) {
+                            System.out.print("Monto a retirar: ");
+                            double retiro = scanner.nextDouble();
+                            ((CuentaBancaria) cuenta).retirar(retiro);
+                        } else if (cuenta instanceof CuentaAhorro) {
+                            System.out.print("Monto a retirar: ");
+                            double retiro = scanner.nextDouble();
+                            ((CuentaAhorro) cuenta).retirar(retiro);
+                        } else if (cuenta instanceof CuentaCredito) {
+                            System.out.println("1. Usar credito\n2. Pagar credito");
+                            int sub = scanner.nextInt();
+                            System.out.print("Monto: ");
+                            double monto = scanner.nextDouble();
+                            if (sub == 1) {
+                                ((CuentaCredito) cuenta).usarCredito(monto);
+                            } else if (sub == 2) {
+                                ((CuentaCredito) cuenta).pagarCredito(monto);
+                            } else {
+                                System.out.println("Opcion incorrecta.");
+                            }
+                        }
+                    } else {
+                        System.out.println("Primero debes crear una cuenta.");
+                    }
+                    break;
+
+                case 5:
+                    if (cuenta != null) cuenta.mostrarTipoCuenta();
+                    else System.out.println("Primero debes crear una cuenta.");
+                    break;
+
+                case 6:
+                    System.out.println("Gracias por usar Bank Boston.");
+                    break;
+
+                default:
+                    System.out.println("Opcion incorrecta.");
+            }
+        } while (opcion != 6);
+
+        scanner.close();
+    }
+}
+// Este es el trabajo que más me ha costado por lejos, no se si está bien, pero puse bastantes horas en esto. 
+// Si la nota es mala, intentaré dar lo mejor para los siguientes trabajos, pero con este perdi la cabeza.
+
